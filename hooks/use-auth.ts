@@ -2,56 +2,26 @@
 
 import { useState, useEffect } from "react"
 
-export interface User {
-  email: string
-  name: string
-}
-
 export function useAuth() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [user, setUser] = useState<User | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLogged, setIsLogged] = useState<boolean | null>(null)
 
-  // Load auth state from localStorage on mount
   useEffect(() => {
-    const savedUser = localStorage.getItem("user")
-    if (savedUser) {
-      try {
-        setUser(JSON.parse(savedUser))
-        setIsAuthenticated(true)
-      } catch (error) {
-        localStorage.removeItem("user")
-      }
-    }
-    setIsLoading(false)
+    const stored = localStorage.getItem("logged")
+    setIsLogged(stored === "true")
   }, [])
 
   const login = async (email: string, password: string) => {
-    // Mock authentication - accept any valid email/password
-    if (email && email.includes("@") && password.length >= 6) {
-      const newUser = {
-        email,
-        name: email.split("@")[0],
-      }
-      setUser(newUser)
-      setIsAuthenticated(true)
-      localStorage.setItem("user", JSON.stringify(newUser))
-      return true
-    }
-    return false
+    if (!email || password.length < 6) return false
+
+    localStorage.setItem("logged", "true")
+    setIsLogged(true)
+    return true
   }
 
   const logout = () => {
-    setUser(null)
-    setIsAuthenticated(false)
-    localStorage.removeItem("user")
+    localStorage.removeItem("logged")
+    setIsLogged(false)
   }
 
-  return {
-    isAuthenticated,
-    user,
-    isLoading,
-    login,
-    logout,
-  }
+  return { isLogged, login, logout }
 }

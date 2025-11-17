@@ -1,37 +1,42 @@
-"use client"
+// components/login-form.tsx
+"use client";
 
-import type React from "react"
-
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card } from "@/components/ui/card"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { useAuth } from "@/hooks/use-auth"
+import type React from "react";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useAuth } from "@/hooks/use-auth";
+import { useRouter } from "next/navigation";
 
 export function LoginForm() {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [error, setError] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const { login } = useAuth()
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError("")
-    setIsLoading(true)
+    e.preventDefault();
+    setError("");
+    setIsLoading(true);
 
     try {
-      const success = await login(email, password)
-      if (!success) {
-        setError("Email o contraseña inválidos")
+      const success = await login(email, password);
+      if (success) {
+        router.push("/");
+        return;
       }
+
+      setError("Email o contraseña inválidos");
     } catch (err) {
-      setError("Ocurrió un error al iniciar sesión")
+      setError("Ocurrió un error al iniciar sesión");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-white via-gray-50 to-gray-100 flex items-center justify-center p-4">
@@ -39,7 +44,12 @@ export function LoginForm() {
         <div className="p-8">
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-blue-600 mb-4">
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg
+                className="w-6 h-6 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -49,12 +59,16 @@ export function LoginForm() {
               </svg>
             </div>
             <h1 className="text-2xl font-bold text-gray-900">AutoFactura</h1>
-            <p className="text-gray-600 text-sm mt-2">Sistema de Gestión de Facturas</p>
+            <p className="text-gray-600 text-sm mt-2">
+              Sistema de Gestión de Facturas
+            </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Email
+              </label>
               <Input
                 type="email"
                 value={email}
@@ -66,7 +80,9 @@ export function LoginForm() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Contraseña</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Contraseña
+              </label>
               <Input
                 type="password"
                 value={password}
@@ -93,10 +109,11 @@ export function LoginForm() {
           </form>
 
           <p className="text-center text-gray-600 text-xs mt-6">
-            Demo: usa cualquier email válido y cualquier contraseña (mín. 6 caracteres)
+            Demo: usa cualquier email válido y cualquier contraseña (mín. 6
+            caracteres)
           </p>
         </div>
       </Card>
     </div>
-  )
+  );
 }
