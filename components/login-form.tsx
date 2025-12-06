@@ -1,14 +1,20 @@
-// components/login-form.tsx
 "use client";
 
-import type React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import Link from "next/link";
 import { useAuth } from "@/hooks/use-auth";
-import { useRouter } from "next/navigation";
 
 export function LoginForm() {
   const router = useRouter();
@@ -39,57 +45,38 @@ export function LoginForm() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-gray-50 to-gray-100 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md bg-white border-gray-200 shadow-lg">
-        <div className="p-8">
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-blue-600 mb-4">
-              <svg
-                className="w-6 h-6 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-            </div>
-            <h1 className="text-2xl font-bold text-gray-900">AutoFactura</h1>
-            <p className="text-gray-600 text-sm mt-2">
-              Sistema de Gestión de Facturas
-            </p>
-          </div>
+    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+      <Card className="w-full max-w-md">
+        <CardHeader className="text-center">
+          <CardTitle className="text-2xl">Iniciar Sesión</CardTitle>
+          <CardDescription>Ingresa tus credenciales para acceder</CardDescription>
+        </CardHeader>
 
+        <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Email
-              </label>
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
               <Input
+                id="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="tu@email.com"
+                placeholder="Ingresa tu correo"
                 disabled={isLoading}
-                className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400"
+                required
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Contraseña
-              </label>
+            <div className="space-y-2">
+              <Label htmlFor="password">Contraseña</Label>
               <Input
+                id="password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••"
+                placeholder="Ingresa tu contraseña"
                 disabled={isLoading}
-                className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400"
+                required
               />
             </div>
 
@@ -99,20 +86,20 @@ export function LoginForm() {
               </Alert>
             )}
 
-            <Button
-              type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium"
-              disabled={isLoading}
-            >
+            <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? "Iniciando sesión..." : "Iniciar Sesión"}
             </Button>
           </form>
 
-          <p className="text-center text-gray-600 text-xs mt-6">
-            Demo: usa cualquier email válido y cualquier contraseña (mín. 6
-            caracteres)
-          </p>
-        </div>
+          <div className="mt-4 text-center">
+            <p className="text-sm text-muted-foreground">
+              ¿No tienes una cuenta?{" "}
+              <Link href="/register" className="text-blue-500 hover:underline">
+                Regístrate
+              </Link>
+            </p>
+          </div>
+        </CardContent>
       </Card>
     </div>
   );
