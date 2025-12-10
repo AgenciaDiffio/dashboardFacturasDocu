@@ -1,12 +1,11 @@
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
-
 generator client {
   provider = "prisma-client-js"
 }
 
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
 
 model User {
   id        Int      @id @default(autoincrement())
@@ -14,4 +13,34 @@ model User {
   username  String   @unique
   password  String
   createdAt DateTime @default(now())
+}
+
+model Income {
+  id            Int      @id @default(autoincrement())
+  ruc           String
+  subsidiary    String
+  receiptNumber String
+  stamped       String
+  currency      String
+  condition     String
+  cotization    String
+  totalAmount   String
+  createdAt     DateTime @default(now())
+}
+
+model Egress {
+  id                   Int      @id @default(autoincrement())
+  ruc                  String
+  subsidiary           String
+  receiptNumber        String
+  stamped              String
+  dueDate              String
+  isVirtual            Boolean
+  notRetain            Boolean
+  nonDeductibleExpense Boolean
+  currency             String
+  condition            String
+  cotization           String
+  totalAmount          String
+  createdAt            DateTime @default(now())
 }
