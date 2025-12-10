@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { verifyAuth } from "@/lib/verify-auth";
 
 const protectedRoutes = ["/", "/dashboard", "/perfil", "/facturas"];
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 export async function proxy(req: Request) {
   const url = new URL(req.url);
@@ -10,12 +11,12 @@ export async function proxy(req: Request) {
   if (!protectedRoutes.includes(path)) return NextResponse.next();
 
   const token = req.cookies.get("auth-token")?.value;
-  if (!token) return NextResponse.redirect("/login");
+  if (!token) return NextResponse.redirect(`${BASE_URL}/login`);
 
   try {
     await verifyAuth(token);
     return NextResponse.next();
   } catch {
-    return NextResponse.redirect("/login");
+    return NextResponse.redirect(`${BASE_URL}/login`);
   }
 }
