@@ -7,40 +7,169 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum InvoiceProcessStatus {
+  SUCCESS
+  FAILED
+}
+
 model User {
   id        Int      @id @default(autoincrement())
   email     String   @unique
   username  String   @unique
   password  String
   createdAt DateTime @default(now())
+  incomes   Income[]
+  egresses  Egress[]
 }
 
 model Income {
-  id            Int      @id @default(autoincrement())
-  ruc           String
-  subsidiary    String
-  receiptNumber String
-  stamped       String
-  currency      String
-  condition     String
-  cotization    String
-  totalAmount   String
-  createdAt     DateTime @default(now())
+  id              Int      @id @default(autoincrement())
+  ven_tipimp      String   @default("I")
+  ven_gra05       Decimal? @db.Decimal(18, 2)
+  ven_iva05       Decimal? @db.Decimal(18, 2)
+  ven_disg05      Decimal? @db.Decimal(18, 2)
+  cta_iva05       String?
+  ven_rubgra      Decimal? @db.Decimal(18, 2)
+  ven_rubg05      Decimal? @db.Decimal(18, 2)
+  ven_disexe      Decimal? @db.Decimal(18, 2)
+  ven_numero      String?
+  ven_imputa      String?
+  ven_sucurs      String?  @default("1")
+  generar         Int      @default(0)
+  form_pag        String?
+  ven_centro      String?
+  ven_clie        String?
+  ven_cuenta      String?
+  ven_clinom      String?
+  ven_tipofa      String?
+  ven_fecha       String?
+  ven_totfac      Decimal? @db.Decimal(18, 2)
+  ven_exenta      Decimal? @db.Decimal(18, 2)
+  ven_gravad      Decimal? @db.Decimal(18, 2)
+  ven_iva         Decimal? @db.Decimal(18, 2)
+  ven_aux         String?
+  ven_retenc      Decimal? @db.Decimal(18, 2)
+  ven_ctrl        String?
+  ven_con         String?
+  ven_cuota       String?
+  ven_fecven      String?
+  cant_dias       Int?
+  origen          String?
+  cambio          Decimal? @db.Decimal(18, 4)
+  valor           Decimal? @db.Decimal(18, 2)
+  moneda          String?
+  exen_dolar      Decimal? @db.Decimal(18, 2)
+  concepto        String?  @default("VENTAS")
+  cta_iva         String?
+  cta_caja        String?
+  tkdesde         String?
+  tkhasta         String?
+  caja            String?
+  ven_disgra      Decimal? @db.Decimal(18, 2)
+  forma_devo      String?
+  ven_cuense      String?
+  anular          Boolean? @default(false)
+  reproceso       Boolean? @default(false)
+  cuenta_exe      String?
+  usu_ide         String?
+  rucvennrotim    String?
+  ventirptip      String?
+  clieasi         String?
+  ventirpgra      Decimal? @db.Decimal(18, 2)
+  ventirpexe      Decimal? @db.Decimal(18, 2)
+  irpc            Decimal? @db.Decimal(18, 2)
+  ivasimplificado Decimal? @db.Decimal(18, 2)
+  nroFacAso       String?
+  TimFacAso       Int?     @default(0)
+  createdAt       DateTime @default(now())
+  userId          Int?
+  user            User?    @relation(fields: [userId], references: [id])
 }
 
 model Egress {
-  id                   Int      @id @default(autoincrement())
-  ruc                  String
-  subsidiary           String
-  receiptNumber        String
-  stamped              String
-  dueDate              String
-  isVirtual            Boolean
-  notRetain            Boolean
-  nonDeductibleExpense Boolean
-  currency             String
-  condition            String
-  cotization           String
-  totalAmount          String
-  createdAt            DateTime @default(now())
+  id              Int      @id @default(autoincrement())
+  com_numero      String?
+  generar         Int      @default(0)
+  cta_iva         String?
+  cta_caja        String?
+  form_pag        String?
+  com_imputa      String?
+  com_sucurs      String?
+  com_centro      String?
+  com_provee      String?
+  com_cuenta      String?
+  com_prvnom      String?
+  com_tipofa      String?
+  com_fecha       String?
+  com_totfac      Decimal? @db.Decimal(18, 2)
+  com_exenta      Decimal? @db.Decimal(18, 2)
+  com_gravad      Decimal? @db.Decimal(18, 2)
+  com_iva         Decimal? @db.Decimal(18, 2)
+  com_import      Decimal? @db.Decimal(18, 2)
+  com_aux         String?
+  com_con         String?
+  com_cuota       String?
+  com_fecven      String?  @default("1753-01-01")
+  com_ordenp      String?
+  cant_dias       Int?     @default(0)
+  com_x           String?
+  moneda          String?
+  cambio          Decimal? @db.Decimal(18, 4)
+  valor           Decimal? @db.Decimal(18, 2)
+  origen          String?
+  exen_dolar      Decimal? @db.Decimal(18, 2)
+  com_disexe      Decimal? @db.Decimal(18, 2)
+  com_disgra      Decimal? @db.Decimal(18, 2)
+  forma_devo      String?
+  retencion       Decimal? @db.Decimal(18, 2)
+  porcentaje      Decimal? @db.Decimal(18, 2)
+  reproceso       Boolean? @default(false)
+  cuenta_exe      String?
+  com_tipimp      String?  @default("L")
+  com_gra05       Decimal? @db.Decimal(18, 2)
+  com_iva05       Decimal? @db.Decimal(18, 2)
+  com_disg05      Decimal? @db.Decimal(18, 2)
+  cta_iva05       String?
+  com_rubgra      Decimal? @db.Decimal(18, 2)
+  com_rubgra05    Decimal? @db.Decimal(18, 2)
+  com_ctag05      String?
+  com_rubexe      Decimal? @db.Decimal(18, 2)
+  com_saldo       Decimal? @db.Decimal(18, 2)
+  com_timbra      String?
+  RetNroFac       String?
+  RetRetFec       String?
+  RetTim          String?
+  RetIva          Decimal? @db.Decimal(18, 2)
+  RetRen          Decimal? @db.Decimal(18, 2)
+  RetIvaCon       String?
+  RetRetCon       String?
+  TipoExport      String?
+  Retiva05        Decimal? @db.Decimal(18, 2)
+  IrpTip          String?
+  IrpInc          String?
+  IrpMon          String?
+  IrpTip2         String?
+  IrpInc2         String?
+  IrpMon2         String?
+  irpc            Decimal? @db.Decimal(18, 2)
+  ivasimplificado Decimal? @db.Decimal(18, 2)
+  comnroncaso     String?
+  comtimnncaso    String?
+  comctaban       String?
+  combanraz       String?
+  comvirtual      Boolean?
+  com_timven      String?
+  createdAt       DateTime @default(now())
+  userId          Int?
+  user            User?    @relation(fields: [userId], references: [id])
+}
+
+model InvoiceProcessLog {
+  id            Int                  @id @default(autoincrement())
+  fileName      String
+  invoiceType   String
+  receiptNumber String?
+  status        InvoiceProcessStatus
+  errorMessage  String?
+  createdAt     DateTime             @default(now())
 }

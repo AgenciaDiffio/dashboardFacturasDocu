@@ -5,33 +5,47 @@ import { useAuth } from "@/hooks/use-auth"
 import { Header } from "@/components/header"
 import { FacturasList } from "@/components/facturas-list"
 import { StatsCard } from "@/components/stats-card"
+import { LogsList } from "@/components/logs-list"
+import { UploadFacturaButton } from "@/components/upload-factura-button"
+import type { Income, Egress } from "@/lib/types"
 
 export function Dashboard() {
   const [activeTab, setActiveTab] = useState("overview")
-  const [incomeData, setIncomeData] = useState([])
-  const [egressData, setEgressData] = useState([])
+  const [incomeData, setIncomeData] = useState<Income[]>([])
+  const [egressData, setEgressData] = useState<Egress[]>([])
+  const [logsData, setLogsData] = useState([])
   const { logout } = useAuth()
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    async function fetchData() {
-      setLoading(true)
-      try {
-        const res = await fetch("/api/facturas")
-        const data = await res.json()
-        setIncomeData(data.incomes || [])
-        setEgressData(data.egresses || [])
-      } catch (err) {
-        console.error(err)
-      } finally {
-        setLoading(false)
-      }
+  const fetchData = async () => {
+    setLoading(true)
+    try {
+      const res = await fetch("/api/facturas")
+      const data = await res.json()
+      setIncomeData(data.incomes || [])
+      setEgressData(data.egresses || [])
+      setLogsData(data.logs || [])
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setLoading(false)
     }
+  }
+
+  useEffect(() => {
     fetchData()
   }, [])
 
-  const totalIncome = incomeData.reduce((sum, item) => sum + Number(item.totalAmount), 0)
-  const totalEgress = egressData.reduce((sum, item) => sum + Number(item.totalAmount), 0)
+  const toNumber = (value: unknown) => {
+    if (typeof value === "number") return Number.isFinite(value) ? value : 0
+    if (value === null || value === undefined) return 0
+    const cleaned = String(value).replace(/\./g, "").replace(",", ".")
+    const num = Number(cleaned)
+    return Number.isNaN(num) ? 0 : num
+  }
+
+  const totalIncome = incomeData.reduce((sum, item) => sum + toNumber((item as Record<string, unknown>)["ven_totfac"]), 0)
+  const totalEgress = egressData.reduce((sum, item) => sum + toNumber((item as Record<string, unknown>)["com_totfac"]), 0)
 
   if (loading) return <div>Cargando...</div>
 
@@ -40,6 +54,11 @@ export function Dashboard() {
       <Header activeTab={activeTab} onTabChange={setActiveTab} onLogout={logout} />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mb-6 flex justify-between items-center">
+          <div></div>
+          <UploadFacturaButton onUpload={fetchData} />
+        </div>
+
         {activeTab === "overview" && (
           <div className="space-y-8">
             <div>
@@ -70,11 +89,11 @@ export function Dashboard() {
               <div className="space-y-8">
                 <div>
                   <h3 className="text-lg font-semibold text-gray-700 mb-4">Ingresos ({incomeData.length})</h3>
-                  <FacturasList data={incomeData.slice(0, 5)} type="income" />
+                  <FacturasList data={incomeData.slice(0, 5)} type="income" variant="summary" onUpdate={fetchData} />
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-gray-700 mb-4">Egresos ({egressData.length})</h3>
-                  <FacturasList data={egressData.slice(0, 5)} type="egress" />
+                  <FacturasList data={egressData.slice(0, 5)} type="egress" variant="summary" onUpdate={fetchData} />
                 </div>
               </div>
             </div>
@@ -83,15 +102,26 @@ export function Dashboard() {
 
         {activeTab === "ingresos" && (
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Todas las Facturas de Ingresos</h2>
-            <FacturasList data={incomeData} type="income" />
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-900">Todas las Facturas de Ingresos</h2>
+            </div>
+            <FacturasList data={incomeData} type="income" variant="full" onUpdate={fetchData} />
           </div>
         )}
 
         {activeTab === "egresos" && (
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Todas las Facturas de Egresos</h2>
-            <FacturasList data={egressData} type="egress" />
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-900">Todas las Facturas de Egresos</h2>
+            </div>
+            <FacturasList data={egressData} type="egress" variant="full" onUpdate={fetchData} />
+          </div>
+        )}
+
+        {activeTab === "logs" && (
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">Logs de Procesamiento</h2>
+            <LogsList data={logsData} />
           </div>
         )}
       </main>

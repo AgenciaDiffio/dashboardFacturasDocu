@@ -57,6 +57,11 @@ export function Header({ activeTab, onTabChange, onLogout }: HeaderProps) {
               onClick={() => onTabChange("egresos")}
               active={activeTab === "egresos"}
             />
+            <NavButton
+              label="Logs"
+              onClick={() => onTabChange("logs")}
+              active={activeTab === "logs"}
+            />
           </nav>
 
           <DropdownMenu>

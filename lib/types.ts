@@ -1,25 +1,8 @@
-export type Income = {
-  ruc: string
-  subsidiary: "ZONA FRANCA" | "matriz"
-  receiptNumber: string
-  stamped: string
-  currency: "Guaranies" | "REAL" | "DOLAR"
-  condition: "Contado" | "Crédito"
-  cotization: string
-  totalAmount: string
+export type FacturaRecord = {
+  id?: number
+  createdAt?: string | null
+  [key: string]: string | number | boolean | null | undefined
 }
 
-export type Egress = {
-  ruc: string
-  subsidiary: "ZONA FRANCA" | "matriz"
-  receiptNumber: string
-  stamped: string
-  dueDate: string
-  isVirtual: boolean
-  notRetain: boolean
-  nonDeductibleExpense: boolean
-  currency: "Guaranies" | "REAL" | "DOLAR"
-  condition: "Contado" | "Crédito"
-  cotization: string
-  totalAmount: string
-}
+export type Income = FacturaRecord
+export type Egress = FacturaRecord
